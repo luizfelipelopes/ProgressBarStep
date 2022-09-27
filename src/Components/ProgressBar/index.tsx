@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Container,
   ButtonPrev,
@@ -5,47 +7,53 @@ import {
   TextButton,
   ContainerSteps,
   ContainerStepsProgress,
-  Step
+  Step,
+  Content
 } from "./styles";
 
-export function ProgressBar() {
-  const status = "meta-peso";
+interface statusProps {
+  status: string;
+}
 
-  const steps = [
-    { status: "meta" },
-    { status: "genero" },
-    { status: "data-nascimento" },
-    { status: "altura" },
-    { status: "peso" },
-    { status: "meta-peso" },
-    { status: "meta-peso-semana" },
-    { status: "plano-progresso" },
-    { status: "ultimo-passo" },
-    { status: "done" }
-  ];
+interface ProgressBarProps {
+  steps: array<statusProps>;
+  setStatus: (status: string) => void;
+  children: ReactNode;
+}
 
-  const getStepPosition = (transferStatus) => {
-    return steps.findIndex(({ status }) => status === transferStatus);
-  };
+export function ProgressBar({ steps, setStatus, children }: ProgressBarProps) {
+  const [step, setStep] = useState(0);
+
+  const status = steps[step]?.status;
+
+  if (status) {
+    setStatus(status);
+  }
 
   return (
     <Container>
       <ContainerStepsProgress>
-        <ButtonPrev>
-          <TextButton> {"<"} </TextButton>
+        <ButtonPrev onPress={() => setStep(step > 0 ? step - 1 : 0)}>
+          <TextButton type="prev"> {"<"} </TextButton>
         </ButtonPrev>
 
         <ContainerSteps>
           {steps.map((value, index) => (
             <Step
-              selected={getStepPosition(status) === index ? true : false}
+              items={steps.length}
+              selected={step === index ? true : false}
               key={index}
             ></Step>
           ))}
         </ContainerSteps>
       </ContainerStepsProgress>
-      <ButtonNext>
-        <TextButton> Avançar </TextButton>
+
+      <Content>{children}</Content>
+
+      <ButtonNext
+        onPress={() => setStep(step < steps.length - 1 ? step + 1 : step)}
+      >
+        <TextButton type="next"> Avançar </TextButton>
       </ButtonNext>
     </Container>
   );
