@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Container,
@@ -26,9 +26,11 @@ export function ProgressBar({ steps, setStatus, children }: ProgressBarProps) {
 
   const status = steps[step]?.status;
 
-  if (status) {
-    setStatus(status);
-  }
+  useEffect(() => {
+    if (status) {
+      setStatus(status);
+    }
+  }, [step]);
 
   return (
     <Container>
